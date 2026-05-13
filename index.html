@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>dsa  visualizator</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Structures Visualizer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f4f6f9;
+      margin: 0;
+    }
+
+    h1 {
+      background: #007BFF;
+      color: white;
+      padding: 15px;
+      margin: 0;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #e3f2fd;
+      padding: 10px;
+      flex-wrap: wrap;
+    }
+
+    nav button {
+      margin: 5px;
+      padding: 10px 15px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    nav button.active {
+      background: #0056b3;
+    }
+
+    .section {
+      display: none;
+      padding: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .stack-box,
+    .queue-box,
+    .dll-node {
+      display: inline-block;
+      margin: 5px;
+      padding: 10px 20px;
+      border: 2px solid #007BFF;
+      border-radius: 8px;
+      background: #e3f2fd;
+      font-weight: bold;
+      position: relative;
+      transition: transform 0.5s, opacity 0.5s;
+    }
+
+    .dll-node::after {
+      content: "⇄";
+      font-size: 20px;
+      margin-left: 10px;
+      color: #007BFF;
+    }
+
+    .highlight {
+      background: #ffcc00 !important;
+      border-color: #ff9900 !important;
+      transition: 0.5s;
+    }
+
+    /* ✅ Animations */
+    .fade-in {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .fade-in.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .fade-out {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .fade-out.hide {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    .slide-in {
+      transform: translateX(50px);
+      opacity: 0;
+    }
+
+    .slide-in.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .slide-down {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+
+    .slide-down.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #stackContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    #queueContainer {
+      display: flex;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    #linkedListContainer,
+    #dllContainer {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    canvas {
+      border: 2px solid #007BFF;
+      background: white;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .section {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Data Structures Visualizer</h1>
+  <nav>
+    <button onclick="showSection(event, 'linkedList')" class="active">Linked List</button>
+    <button onclick="showSection(event, 'tree')">Binary Tree</button>
+    <button onclick="showSection(event, 'dll')">Doubly Linked List</button>
+    <button onclick="showSection(event, 'stack')">Stack</button>
+    <button onclick="showSection(event, 'queue')">Queue</button>
+    <button onclick="toggleDarkMode()" style="background:#222;">🌙 Dark Mode</button>
+  </nav>
+
+  <!-- ✅ Linked List Section -->
+  <div id="linkedList" class="section" style="display:flex;">
+    <input type="text" id="llInput" placeholder="Enter value" />
+    <input type="number" id="llPositionInput" placeholder="Position (0-n)" style="width:130px;" />
+    <br><br>
+    <button onclick="insertAtEnd()">Insert at End</button>
+    <button onclick="insertAtBeginning()">Insert at Beginning</button>
+    <button onclick="insertAtPosition()">Insert at Position</button>
+    <button onclick="insertAfterNode()">Insert After Node</button>
+    <button onclick="deleteByValue()">Delete</button>
+    <button onclick="deleteAtPosition()">Delete at Position</button>
+    <button onclick="searchNode()">Search</button>
+    <button onclick="clearList()">Clear</button>
+    <div id="linkedListContainer"></div>
+  </div>
+
+  <!-- ✅ Binary Tree Section -->
+  <div id="tree" class="section">
+    <div>
+      <input type="text" id="btInput" placeholder="Enter value" />
+      <button onclick="insertIntoTree()">Insert</button>
+      <button onclick="deleteFromTree()">Delete</button>
+      <button onclick="searchTree()">Search</button>
+      <button onclick="clearTree()">Clear</button>
+      <br><br>
+      <!-- Traversal Buttons -->
+      <button onclick="traverseTree('inorder')">Inorder</button>
+      <button onclick="traverseTree('preorder')">Preorder</button>
+      <button onclick="traverseTree('postorder')">Postorder</button>
+      <button onclick="traverseTree('levelorder')">Level Order</button>
+    </div>
+    <canvas id="treeCanvas" width="900" height="420"></canvas>
+    <p id="traversalResult" style="margin-top:10px; font-weight:bold;"></p>
+  </div>
+
+  <!-- ✅ Doubly Linked List Section -->
+  <div id="dll" class="section">
+    <div>
+      <input type="text" id="dllInput" placeholder="Enter value" />
+      <button onclick="insertDLL()">Insert at End</button>
+      <button onclick="deleteDLL()">Delete</button>
+      <button onclick="searchDLL()">Search</button>
+      <button onclick="clearDLL()">Clear</button>
+      <div id="dllContainer"></div>
+    </div>
+  </div>
+
+  <!-- ✅ Stack Section -->
+  <div id="stack" class="section">
+    <div>
+      <input type="text" id="stackInput" placeholder="Enter value" />
+      <button onclick="pushToStack()">Push</button>
+      <button onclick="popFromStack()">Pop</button>
+      <button onclick="peekStack()">Peek</button>
+      <button onclick="clearStack()">Clear</button>
+      <div id="stackContainer"></div>
+    </div>
+  </div>
+
+  <!-- ✅ Queue Section -->
+  <div id="queue" class="section">
+    <div>
+      <input type="text" id="queueInput" placeholder="Enter value" />
+      <button onclick="enqueue()">Enqueue</button>
+      <button onclick="dequeue()">Dequeue</button>
+      <button onclick="peekQueue()">Peek</button>
+      <button onclick="clearQueue()">Clear</button>
+      <div id="queueContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- Navigation ---
+    function showSection(event, id) {
+      document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(id).style.display = 'flex';
+      event.target.classList.add('active');
+    }
+
+    function toggleDarkMode() {
+      const body = document.body;
+      if (body.style.background === 'black') {
+        body.style.background = '#f4f6f9';
+        document.querySelectorAll('nav').forEach(n => n.style.background = '#e3f2fd');
+      } else {
+        body.style.background = '#0f1724';
+        document.querySelectorAll('nav').forEach(n => n.style.background = '#111827');
+      }
+    }
+    // ================= Linked List =================
+    let linkedList = [];
+
+    function renderLinkedList(animatedIndex = null, deletingValue = null) {
+      const c = document.getElementById("linkedListContainer");
+      c.innerHTML = "";
+      linkedList.forEach((val, i) => {
+        const node = document.createElement("div");
+        node.className = "stack-box";
+        node.textContent = val;
+        if (animatedIndex === i) {
+          node.classList.add("slide-in");
+          setTimeout(() => node.classList.add("show"), 50);
+        }
+        c.appendChild(node);
+        if (i < linkedList.length - 1) {
+          const arrow = document.createElement("span");
+          arrow.textContent = "→";
+          arrow.style.margin = "0 10px";
+          arrow.style.fontSize = "20px";
+          c.appendChild(arrow);
+        }
+      });
+      if (deletingValue !== null) {
+        const nodes = c.getElementsByClassName("stack-box");
+        Array.from(nodes).forEach(n => {
+          if (n.textContent === deletingValue) {
+            n.classList.add("fade-out");
+            setTimeout(() => n.classList.add("hide"), 50);
+            setTimeout(() => n.remove(), 500);
+          }
+        });
+      }
+    }
+
+    function insertAtEnd() {
+      const v = document.getElementById("llInput").value.trim();
+      if (!v) return;
+      linkedList.push(v);
+      renderLinkedList(linkedList.length - 1);
+    }
+
+    function insertAtBeginning() {
+      const v = document.getElementById("llInput").value.trim();
+      if (!v) return;
+      linkedList.unshift(v);
+      renderLinkedList(0);
+    }
+
+    function insertAtPosition() {
+      const v = document.getElementById("llInput").value.trim();
+      const p = parseInt(document.getElementById("llPositionInput").value);
+      if (!v || isNaN(p) || p < 0 || p > linkedList.length) return;
+      linkedList.splice(p, 0, v);
+      renderLinkedList(p);
+    }
+
+    function insertAfterNode() {
+      const v = document.getElementById("llInput").value.trim();
+      const p = parseInt(document.getElementById("llPositionInput").value);
+      if (!v || isNaN(p) || p < 0 || p >= linkedList.length) return;
+      linkedList.splice(p + 1, 0, v);
+      renderLinkedList(p + 1);
+    }
+
+    function deleteByValue() {
+      const v = document.getElementById("llInput").value.trim();
+      if (!v) return;
+      linkedList = linkedList.filter(x => x !== v);
+      renderLinkedList(null, v);
+    }
+
+    function deleteAtPosition() {
+      const p = parseInt(document.getElementById("llPositionInput").value);
+      if (isNaN(p) || p < 0 || p >= linkedList.length) return;
+      const d = linkedList[p];
+      linkedList.splice(p, 1);
+      renderLinkedList(null, d);
+    }
+
+    function searchNode() {
+      const v = document.getElementById("llInput").value.trim();
+      if (!v) return;
+      const nodes = document.getElementById("linkedListContainer").getElementsByClassName("stack-box");
+      Array.from(nodes).forEach(n => {
+        if (n.textContent === v) {
+          n.classList.add("highlight");
+          setTimeout(() => n.classList.remove("highlight"), 1000);
+        }
+      });
+    }
+
+    function clearList() {
+      linkedList = [];
+      document.getElementById("linkedListContainer").innerHTML = "";
+    }
+    // ================= Doubly Linked List =================
+    <
+    !--✅Doubly Linked List Section-- >
+    <
+    div id = "dll"
+    class = "section" >
+      <
+      div >
+      <
+      input type = "text"
+    id = "dllInput"
+    placeholder = "Enter value" / >
+      <
+      br > < br >
+      <
+      button onclick = "insertDLL()" > Insert at End < /button> <
+    button onclick = "insertAtBeginningDLL()" > Insert at Beginning < /button> <
+    button onclick = "insertAtPositionDLL()" > Insert at Position < /button> <
+    br > < br >
+      <
+      button onclick = "deleteDLL()" > Delete by Value < /button> <
+    button onclick = "deleteAtBeginningDLL()" > Delete at Beginning < /button> <
+    button onclick = "deleteAtEndDLL()" > Delete at End < /button> <
+    button onclick = "deleteAtPositionDLL()" > Delete at Position < /button> <
+    br > < br >
+      <
+      button onclick = "searchDLL()" > Search < /button> <
+    button onclick = "updateDLL()" > Update Node < /button> <
+    button onclick = "countDLL()" > Count Nodes < /button> <
+    br > < br >
+      <
+      button onclick = "traverseBackwardDLL()" > Backward Traversal < /button> <
+    button onclick = "reverseDLL()" > Reverse DLL < /button> <
+    button onclick = "clearDLL()" > Clear < /button> <
+    div id = "dllContainer" > < /div> < /
+      div > <
+      /div>
+    // ================= Stack =================
+    function pushToStack() {
+      const v = document.getElementById("stackInput").value.trim();
+      if (!v) return;
+      const box = document.createElement("div");
+      box.className = "stack-box slide-down";
+      box.textContent = v;
+      document.getElementById("stackContainer").appendChild(box);
+      setTimeout(() => box.classList.add("show"), 50);
+    }
+
+    function popFromStack() {
+      const c = document.getElementById("stackContainer");
+      const boxes = c.getElementsByClassName("stack-box");
+      if (!boxes.length) return;
+      const top = boxes[boxes.length - 1];
+      top.classList.add("fade-out");
+      setTimeout(() => top.classList.add("hide"), 50);
+      setTimeout(() => c.removeChild(top), 500);
+    }
+
+    function peekStack() {
+      const c = document.getElementById("stackContainer");
+      const boxes = c.getElementsByClassName("stack-box");
+      if (!boxes.length) return;
+      const top = boxes[boxes.length - 1];
+      top.classList.add("highlight");
+      setTimeout(() => top.classList.remove("highlight"), 1000);
+    }
+
+    function clearStack() {
+      const c = document.getElementById("stackContainer");
+      const boxes = [...c.getElementsByClassName("stack-box")];
+      boxes.forEach((b, i) => {
+        setTimeout(() => {
+          b.classList.add("fade-out");
+          setTimeout(() => b.remove(), 500);
+        }, i * 100);
+      });
+    }
+    // ================= Queue =================
+    function enqueue() {
+      const v = document.getElementById("queueInput").value.trim();
+      if (!v) return;
+      const box = document.createElement("div");
+      box.className = "queue-box slide-in";
+      box.textContent = v;
+      document.getElementById("queueContainer").appendChild(box);
+      setTimeout(() => box.classList.add("show"), 50);
+    }
+
+    function dequeue() {
+      const c = document.getElementById("queueContainer");
+      const boxes = c.getElementsByClassName("queue-box");
+      if (!boxes.length) return;
+      const first = boxes[0];
+      first.classList.add("fade-out");
+      setTimeout(() => first.classList.add("hide"), 50);
+      setTimeout(() => c.removeChild(first), 500);
+    }
+
+    function peekQueue() {
+      const c = document.getElementById("queueContainer");
+      const boxes = c.getElementsByClassName("queue-box");
+      if (!boxes.length) return;
+      const first = boxes[0];
+      first.classList.add("highlight");
+      setTimeout(() => first.classList.remove("highlight"), 1000);
+    }
+
+    function clearQueue() {
+      const c = document.getElementById("queueContainer");
+      const boxes = [...c.getElementsByClassName("queue-box")];
+      boxes.forEach((b, i) => {
+        setTimeout(() => {
+          b.classList.add("fade-out");
+          setTimeout(() => b.remove(), 500);
+        }, i * 100);
+      });
+    }
+    // ================= Binary Tree =================
+    class TreeNode {
+      constructor(val) {
+        this.val = val;
+        this.left = null;
+        this.right = null;
+      }
+    }
+    let root = null;
+
+    function insertIntoTree() {
+      const v = parseInt(document.getElementById("btInput").value.trim());
+      if (isNaN(v)) return;
+      root = insertBST(root, v);
+      drawTree();
+    }
+
+    function insertBST(node, val) {
+      if (!node) return new TreeNode(val);
+      if (val < node.val) node.left = insertBST(node.left, val);
+      else if (val > node.val) node.right = insertBST(node.right, val);
+      return node;
+    }
+
+    function deleteFromTree() {
+      const v = parseInt(document.getElementById("btInput").value.trim());
+      if (isNaN(v)) return;
+      root = deleteBST(root, v);
+      drawTree();
+    }
+
+    function deleteBST(node, val) {
+      if (!node) return null;
+      if (val < node.val) node.left = deleteBST(node.left, val);
+      else if (val > node.val) node.right = deleteBST(node.right, val);
+      else {
+        if (!node.left) return node.right;
+        if (!node.right) return node.left;
+        let min = findMin(node.right);
+        node.val = min.val;
+        node.right = deleteBST(node.right, min.val);
+      }
+      return node;
+    }
+
+    function findMin(node) {
+      while (node.left) node = node.left;
+      return node;
+    }
+    // Traversal functions
+    function traverseTree(type) {
+      let result = [];
+
+      function inorder(node) {
+        if (!node) return;
+        inorder(node.left);
+        result.push(node.val);
+        inorder(node.right);
+      }
+
+      function preorder(node) {
+        if (!node) return;
+        result.push(node.val);
+        preorder(node.left);
+        preorder(node.right);
+      }
+
+      function postorder(node) {
+        if (!node) return;
+        postorder(node.left);
+        postorder(node.right);
+        result.push(node.val);
+      }
+
+      function levelorder(node) {
+        if (!node) return;
+        let q = [node];
+        while (q.length) {
+          let cur = q.shift();
+          result.push(cur.val);
+          if (cur.left) q.push(cur.left);
+          if (cur.right) q.push(cur.right);
+        }
+      }
+      if (type === "inorder") inorder(root);
+      if (type === "preorder") preorder(root);
+      if (type === "postorder") postorder(root);
+      if (type === "levelorder") levelorder(root);
+      document.getElementById("traversalResult").textContent =
+        type.toUpperCase() + ": " + result.join(" → ");
+      // briefly highlight traversal sequence on canvas
+      animateTraversal(result);
+    }
+
+    function animateTraversal(seq) {
+      if (!seq || !seq.length) return;
+      let i = 0;
+      const step = () => {
+        if (i >= seq.length) {
+          drawTree();
+          return;
+        }
+        drawTree(seq[i]);
+        i++;
+        setTimeout(step, 450);
+      };
+      step();
+    }
+
+    function clearTree() {
+      root = null;
+      drawTree();
+      document.getElementById("traversalResult").textContent = "";
+    }
+    // Search with path + animated highlighting
+    function searchTree() {
+      const v = parseInt(document.getElementById("btInput").value.trim());
+      if (isNaN(v) || !root) return;
+      let path = [];
+      let cur = root;
+      let found = false;
+      while (cur) {
+        path.push(cur.val);
+        if (cur.val === v) {
+          found = true;
+          break;
+        }
+        cur = (v < cur.val) ? cur.left : cur.right;
+      }
+      // animate the path
+      let i = 0;
+      const animate = () => {
+        if (i >= path.length) {
+          // final draw with target highlighted if found
+          drawTree(found ? v : null);
+          document.getElementById("traversalResult").textContent =
+            "Search Path: " + path.join(" → ") + (found ? " | Found ✅" : " | Not Found ❌");
+          return;
+        }
+        drawTree(path[i]);
+        i++;
+        setTimeout(animate, 400);
+      };
+      animate();
+    }
+    // Draw tree on canvas
+    function drawTree(highlightVal = null) {
+      const canvas = document.getElementById("treeCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!root) return;
+      drawNode(ctx, root, canvas.width / 2, 50, canvas.width / 4, highlightVal);
+    }
+
+    function drawNode(ctx, node, x, y, offset, highlightVal) {
+      if (!node) return;
+      // draw connections first (so nodes are on top)
+      if (node.left) {
+        ctx.beginPath();
+        ctx.moveTo(x, y + 20);
+        ctx.lineTo(x - offset, y + 70 - 20);
+        ctx.strokeStyle = "#007BFF";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      if (node.right) {
+        ctx.beginPath();
+        ctx.moveTo(x, y + 20);
+        ctx.lineTo(x + offset, y + 70 - 20);
+        ctx.strokeStyle = "#007BFF";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      // node circle
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = (node.val === highlightVal) ? "#ffcc00" : "#e3f2fd";
+      ctx.strokeStyle = (node.val === highlightVal) ? "#ff9900" : "#007BFF";
+      ctx.lineWidth = 2;
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "16px Arial";
+      ctx.fillText(node.val, x, y);
+      if (node.left) drawNode(ctx, node.left, x - offset, y + 70, offset / 2, highlightVal);
+      if (node.right) drawNode(ctx, node.right, x + offset, y + 70, offset / 2, highlightVal);
+    }
+  </script>
+</body>
+
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
